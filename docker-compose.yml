@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: panata-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=${NGROK_DOMAIN}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - WEBHOOK_URL=https://${NGROK_DOMAIN}
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_PASSWORD:-admin}
+      - GENERIC_TIMEZONE=Asia/Manila
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - panata-network
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: panata-ngrok
+    restart: unless-stopped
+    command:
+      - "http"
+      - "n8n:5678"
+      - "--domain=${NGROK_DOMAIN}"
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    ports:
+      - "4040:4040"
+    depends_on:
+      - n8n
+    networks:
+      - panata-network
+
+volumes:
+  n8n_data:
+
+networks:
+  panata-network:
+    driver: bridge
