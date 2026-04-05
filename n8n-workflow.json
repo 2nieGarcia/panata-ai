@@ -1,0 +1,179 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3b45b441-8eb7-48a8-9c05-c8aecb5a5f6e",
+      "name": "Telegram Trigger",
+      "webhookId": "69f05992-f15b-4d72-8747-bef974b29b2a",
+      "credentials": {
+        "telegramApi": {
+          "id": "ANit1XDqagtWnqiM",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "81dfb9d0-d444-41f5-95e0-f6538f1182b2",
+              "name": "task_name",
+              "value": "={{ $json.message.text.split(' ').slice(1).join(' ') }}",
+              "type": "string"
+            },
+            {
+              "id": "9c82e4fa-a38a-4e23-8d6d-24c6e160c539",
+              "name": "priority",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "e2c87c0b-c25e-46cc-9d8c-494413cf6672",
+              "name": "status",
+              "value": "pending",
+              "type": "string"
+            },
+            {
+              "id": "deee71aa-d8fd-4384-a66e-4054fb2745a9",
+              "name": "chat_id",
+              "value": "={{ $json.message.chat.id || $json.callback.chat.id }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        144,
+        0
+      ],
+      "id": "a80d7fb5-9555-43e0-84d2-8ec01073588b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "tableId": "tasks",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "task_name",
+              "fieldValue": "={{ $json.task_name }}"
+            },
+            {
+              "fieldId": "priority",
+              "fieldValue": "={{ $json.priority }}"
+            },
+            {
+              "fieldId": "=status",
+              "fieldValue": "={{ $json.status }}"
+            },
+            {
+              "fieldId": "project_id",
+              "fieldValue": "1ae09426-b2ea-4e5c-a276-88db9f07f38b"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        288,
+        0
+      ],
+      "id": "375b40c9-ddca-4142-b57e-6ea90242f95e",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "raI9GLBdviEFwCtZ",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Edit Fields').item.json.chat_id }}",
+        "text": "=Task created: {{ $json.task_name }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        432,
+        0
+      ],
+      "id": "020a2715-1131-4c4c-8409-c87f1bc21592",
+      "name": "Send a text message",
+      "webhookId": "33af7ef8-6c32-4268-91f8-9dd50370d7c5",
+      "credentials": {
+        "telegramApi": {
+          "id": "ANit1XDqagtWnqiM",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "2cb36e99-e885-47ff-89eb-d7bb76103de7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "050ce468680041ba59222f0f1974db3f72ab3554b86d722dd11dda8728d96fc4"
+  },
+  "id": "QJ_VqFP_6rulgZn_VY-Cp",
+  "tags": []
+}

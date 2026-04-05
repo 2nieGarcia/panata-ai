@@ -80,7 +80,14 @@ panata-ai/
 
 ## Development Phases
 
-- [ ] **Phase 1:** Foundation (Telegram → Supabase → Reply)
+- [x] **Phase 1:** Foundation (Telegram → Supabase → Reply) **COMPLETE**
+  - Telegram → n8n → Supabase → Telegram works
+  - Hard-coded project_id (no LLM yet)
+  - Ready for Phase 2
+  
+  Next: Add router agent + entity extraction
+
+  
 - [ ] **Phase 2:** Brain (Router + Entity Extraction)
 - [ ] **Phase 3:** HITL Approval (Wait Node + Inline Buttons)
 - [ ] **Phase 4:** Voice Input (Groq Whisper)
